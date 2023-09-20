@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from random import sample
 
 # The goal of this program is to create a stackplot, animated over time, of the top 10 male/female baby names in the US from 1880 to 2019
 # I chose a stackplot because it's a good way to visualise and analyse both the changes of names and the rate of change - the most 
@@ -19,7 +20,7 @@ px=1/96
 column_names = ["name","sex","quantity"]
 
 # Male or female baby names
-use_women = False
+use_women = True
 gender = "female" if use_women else "male"
 
 # This dict will store the names as the key, and the list of percentages for this name at each year
@@ -139,10 +140,11 @@ ax.set_ylim(0,100)
 # I wanted to show the next 5 years since much shorter or longer would've have been relevant
 xintervalsize = 5*interpolation_extent
 
-# These are the 10 colours we will use for each name in the stackplot - I chose them at will
+# These are the colours we will use for each name in the stackplot - I chose them at will
 # These names will be given and then recycled whenever a new name becomes top 10
 # I needed to have control over the colours to prevent the same colour from being given to adjacent stacks
-colours=["red","blue","green","yellow","purple","brown","cyan","pink","magenta","orange"]
+colours=["red","blue","green","yellow","purple","brown","cyan","pink","magenta",
+         "orange","tan","gold","lime","grey","violet","mediumspringgreen"]
 
 # Sort the names by their 1880 amounts and get the biggest 10 - we need to have an initial list for our animation 
 # since the colours will be recycled - x[0] is the name, x[1] is the list of quantities, x[2] is the colour that represents that name
@@ -202,7 +204,8 @@ def animate(i):
         else:
             # Filter through the colour list and give them the first available colour 
             # Available colours will be in the list of colours (originally specified outside this function) but NOT in the colourslist
-            for colour in colours:
+            # Shuffle it first using sample so that we can get a variety of different colours
+            for colour in sample(colours, len(colours)):
                 if colour not in colourslist:
                     # Once colour is found, add to the list of colours and break since we've found a colour we can use
                     new_sorted_values_this_interval[ind][2] = colour
@@ -265,7 +268,7 @@ def animate(i):
 
 animation = FuncAnimation(fig, animate, interval=1000/interpolation_extent, frames = 131* interpolation_extent, repeat_delay = 10000)
 
-animation.save(f"{gender}babynamesfps1.gif")
+animation.save(f"{gender}babynames.gif")
 
 #plt.show()
 
